@@ -1,122 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spelling Bee Unlagged WPM Estimator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spelling Bee Unlagged WPM Estimator</title>
 </head>
 <body>
-    <h1>Spelling Bee Unlagged WPM Estimator</h1>
-    
-    <div>
-        <h2>Input Your Stats</h2>
-        
-        <label for="recordedWPM">Your Recorded WPM:</label>
-        <input type="number" id="recordedWPM" placeholder="e.g., 120" min="1" step="0.1">
-        <br><br>
-        
-        <label for="ping">Average Ping (ms):</label>
-        <input type="number" id="ping" placeholder="e.g., 300" min="0" step="10">
-        <br><br>
-        
-        <button onclick="estimateWPM()">Estimate Unlagged WPM</button>
-        <button onclick="clearForm()">Clear</button>
-    </div>
-    
-    <div id="results" style="display:none;">
-        <h2>Results</h2>
-        <p><strong>Your Recorded WPM:</strong> <span id="displayRecordedWPM"></span></p>
-        <p><strong>Enter Delay:</strong> <span id="displayPing"></span> ms</p>
-        <p><strong>Estimated Unlagged WPM:</strong> <span id="unlaggedWPM"></span></p>
-        <p><strong>Estimated WPM Gain:</strong> <span id="wpmGain"></span></p>
-        <br>
-        <p style="font-style:italic; color:gray;">Note: This assumes you were typing the whole time. Actual results may vary due to pauses or other factors.</p>
-    </div>
-    
-    <div id="error" style="display:none; color:red;">
-        <p id="errorMessage"></p>
-    </div>
+<h1>Spelling Bee Unlagged WPM Estimator</h1>
+<div>
+<h2>Input Your Stats</h2>
+<label for="recordedWPM">Your Recorded WPM:</label>
+<input type="number" id="recordedWPM" placeholder="e.g., 220" min="1" step="0.1">
+<br><br>
+<label for="ping">Average Ping (ms):</label>
+<input type="number" id="ping" placeholder="e.g., 200" min="0" step="10">
+<br><br>
+<label for="typingTime">Time Spent Typing (seconds) - just estimate:</label>
+<input type="number" id="typingTime" placeholder="e.g., 3.5" min="0.1" step="0.1">
+<br><br>
+<button onclick="estimateWPM()">Calculate Unlagged WPM</button>
+<button onclick="clearForm()">Clear</button>
+</div>
+<div id="results" style="display:none;">
+<h2>Results</h2>
+<p><strong>Your Recorded WPM:</strong> <span id="displayRecordedWPM"></span></p>
+<p><strong>Enter Delay:</strong> <span id="displayPing"></span> ms</p>
+<p><strong>Estimated Unlagged WPM:</strong> <span id="unlaggedWPM"></span></p>
+<p><strong>Estimated WPM Gain:</strong> <span id="wpmGain"></span></p>
+<br>
+<p style="font-style:italic; color:gray;">Note: This is an estimate based on your guess of typing time. More accurate the closer your guess is to reality.</p>
+</div>
+<div id="error" style="display:none; color:red;">
+<p id="errorMessage"></p>
+</div>
+<script>
+function estimateWPM() {
+// Get input values
+const recordedWPM = parseFloat(document.getElementById('recordedWPM').value);
+const ping = parseFloat(document.getElementById('ping').value);
+const typingTime = parseFloat(document.getElementById('typingTime').value);
 
-    <script>
-        function estimateWPM() {
-            // Get input values
-            const recordedWPM = parseFloat(document.getElementById('recordedWPM').value);
-            const ping = parseFloat(document.getElementById('ping').value);
-            
-            // Hide previous results and errors
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('error').style.display = 'none';
-            
-            // Validation
-            if (!recordedWPM || ping === null) {
-                showError('Please fill in all fields.');
-                return;
-            }
-            
-            if (recordedWPM <= 0 || ping < 0) {
-                showError('Please enter valid positive numbers.');
-                return;
-            }
-            
-            if (ping === 0) {
-                showError('Enter delay should be greater than 0. Check your average ping.');
-                return;
-            }
-            
-            // Convert ping from ms to seconds
-            const delaySeconds = ping / 1000;
-            
-            // The key insight: WPM = (words / time in minutes)
-            // If we assume an average word is 5 letters, then:
-            // words = total_characters / 5
-            // But we don't know total characters, so we work with the ratio:
-            // 
-            // Recorded WPM = (words / recorded_time_in_minutes)
-            // recorded_time_in_minutes = words / Recorded WPM
-            // recorded_time_in_seconds = (words / Recorded WPM) * 60
-            //
-            // But words cancels out in the ratio, so:
-            // delay as a fraction of time = delaySeconds / recorded_time_in_seconds
-            // 
-            // Unlagged WPM = Recorded WPM / (1 - delay_fraction)
-            
-            const delayFraction = delaySeconds * recordedWPM / 60;
-            
-            if (delayFraction >= 1) {
-                showError('Enter delay is longer than the time it took to type. Check your ping value.');
-                return;
-            }
-            
-            const unlaggedWPM = recordedWPM / (1 - delayFraction);
-            const wpmGain = unlaggedWPM - recordedWPM;
-            
-            // Display results
-            document.getElementById('displayRecordedWPM').textContent = recordedWPM.toFixed(2);
-            document.getElementById('displayPing').textContent = ping.toFixed(0);
-            document.getElementById('unlaggedWPM').textContent = unlaggedWPM.toFixed(2);
-            document.getElementById('wpmGain').textContent = wpmGain.toFixed(2);
-            
-            document.getElementById('results').style.display = 'block';
-        }
-        
-        function clearForm() {
-            document.getElementById('recordedWPM').value = '';
-            document.getElementById('ping').value = '';
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('error').style.display = 'none';
-        }
-        
-        function showError(message) {
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('error').style.display = 'block';
-        }
-        
-        // Allow Enter key to trigger calculation
-        document.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                estimateWPM();
-            }
-        });
-    </script>
+// Hide previous results and errors
+document.getElementById('results').style.display = 'none';
+document.getElementById('error').style.display = 'none';
+
+// Validation
+if (!recordedWPM || ping === null || !typingTime) {
+  showError('Please fill in all fields.');
+  return;
+}
+
+if (recordedWPM <= 0 || ping < 0 || typingTime <= 0) {
+  showError('Please enter valid positive numbers.');
+  return;
+}
+
+if (ping === 0) {
+  showError('Enter delay should be greater than 0. Check your average ping.');
+  return;
+}
+
+// Convert ping from ms to seconds
+const delaySeconds = ping / 1000;
+
+// Validate that delay doesn't exceed typing time
+if (delaySeconds >= typingTime) {
+  showError('Enter delay is longer than your estimated typing time. Try a longer estimate.');
+  return;
+}
+
+// Calculate adjusted time (subtract the delay from typing time)
+const adjustedTime = typingTime - delaySeconds;
+
+// Work backwards from recorded WPM to get word count
+// Recorded WPM = (words / time_in_minutes)
+// words = Recorded WPM * (time_in_minutes)
+const recordedTimeInMinutes = typingTime / 60;
+const words = recordedWPM * recordedTimeInMinutes;
+
+// Calculate unlagged WPM
+const unlaggedTimeInMinutes = adjustedTime / 60;
+const unlaggedWPM = words / unlaggedTimeInMinutes;
+
+// Calculate WPM gain
+const wpmGain = unlaggedWPM - recordedWPM;
+
+// Display results
+document.getElementById('displayRecordedWPM').textContent = recordedWPM.toFixed(2);
+document.getElementById('displayPing').textContent = ping.toFixed(0);
+document.getElementById('unlaggedWPM').textContent = unlaggedWPM.toFixed(2);
+document.getElementById('wpmGain').textContent = wpmGain.toFixed(2);
+document.getElementById('results').style.display = 'block';
+}
+
+function clearForm() {
+document.getElementById('recordedWPM').value = '';
+document.getElementById('ping').value = '';
+document.getElementById('typingTime').value = '';
+document.getElementById('results').style.display = 'none';
+document.getElementById('error').style.display = 'none';
+}
+
+function showError(message) {
+document.getElementById('errorMessage').textContent = message;
+document.getElementById('error').style.display = 'block';
+}
+
+// Allow Enter key to trigger calculation
+document.addEventListener('keypress', function(event) {
+  if (event.key === 'Enter') {
+    estimateWPM();
+  }
+});
+</script>
 </body>
 </html>
