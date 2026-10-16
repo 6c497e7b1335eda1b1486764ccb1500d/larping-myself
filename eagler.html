@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eaglercraft Username Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .username-box {
+            background: #f0f0f0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            word-break: break-word;
+            min-height: 30px;
+        }
+
+        button {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Eaglercraft Username Generator</h1>
+        
+        <div>
+            <div class="label">Username 1</div>
+            <div class="username-box" id="username1"></div>
+        </div>
+
+        <div>
+            <div class="label">Username 2</div>
+            <div class="username-box" id="username2"></div>
+        </div>
+
+        <button onclick="generateUsernames()">Generate Usernames</button>
+    </div>
+
+    <script>
+        const names = ['Yeel', 'Darver', 'Eagl', 'Yeeish', 'Yeer', 'Yigg'];
+
+        function getRandomName() {
+            return names[Math.floor(Math.random() * names.length)];
+        }
+
+        function getRandomNumber() {
+            return Math.floor(Math.random() * 10000);
+        }
+
+        function generateUsernames() {
+            let name1 = getRandomName();
+            let name2 = getRandomName();
+
+            // Ensure name2 is different from name1
+            while (name2 === name1) {
+                name2 = getRandomName();
+            }
+
+            const username1 = name1 + getRandomNumber();
+            const username2 = name2 + getRandomNumber();
+
+            document.getElementById('username1').textContent = username1;
+            document.getElementById('username2').textContent = username2;
+        }
+
+        // Generate usernames on page load
+        generateUsernames();
+    </script>
+</body>
+</html>
