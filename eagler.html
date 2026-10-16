@@ -32,14 +32,14 @@
 
         .username-box {
             background: #f0f0f0;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 20px;
+            margin: 20px 0;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 24px;
             font-weight: bold;
             color: #667eea;
             word-break: break-word;
-            min-height: 30px;
+            min-height: 35px;
         }
 
         button {
@@ -61,31 +61,15 @@
         button:active {
             transform: scale(0.98);
         }
-
-        .label {
-            font-size: 12px;
-            color: #666;
-            margin-top: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎮 Eaglercraft Username Generator</h1>
         
-        <div>
-            <div class="label">Username 1</div>
-            <div class="username-box" id="username1"></div>
-        </div>
+        <div class="username-box" id="username"></div>
 
-        <div>
-            <div class="label">Username 2</div>
-            <div class="username-box" id="username2"></div>
-        </div>
-
-        <button onclick="generateUsernames()">Generate Usernames</button>
+        <button onclick="generateUsername()">Generate Username</button>
     </div>
 
     <script>
@@ -96,10 +80,10 @@
         }
 
         function getRandomNumber() {
-            return Math.floor(Math.random() * 10000);
+            return Math.floor(Math.random() * 9999) + 1; // 1-9999
         }
 
-        function generateUsernames() {
+        function generateUsername() {
             let name1 = getRandomName();
             let name2 = getRandomName();
 
@@ -108,15 +92,14 @@
                 name2 = getRandomName();
             }
 
-            const username1 = name1 + getRandomNumber();
-            const username2 = name2 + getRandomNumber();
+            const randomNumber = getRandomNumber();
+            const username = name1 + name2 + randomNumber;
 
-            document.getElementById('username1').textContent = username1;
-            document.getElementById('username2').textContent = username2;
+            document.getElementById('username').textContent = username;
         }
 
-        // Generate usernames on page load
-        generateUsernames();
+        // Generate username on page load
+        generateUsername();
     </script>
 </body>
 </html>
